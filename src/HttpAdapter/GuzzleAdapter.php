@@ -1,12 +1,12 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\HttpAdapter;
+namespace ColoursFactory\ReFreshMailer\HttpAdapter;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Request;
-use Preclowski\ReFreshMailer\Exception\HttpAdapterException;
+use ColoursFactory\ReFreshMailer\Exception\HttpAdapterException;
 
 /**
  * @author Konrad Pawlikowski <preclowski@gmail.com>
@@ -23,15 +23,13 @@ class GuzzleAdapter implements HttpAdapterInterface
      */
     public function __construct(array $options = [])
     {
-        $this->client = new Client([
-            'base_url' => $options['host'],
-        ]);
+        $this->client = new Client();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws \Preclowski\ReFreshMailer\Exception\HttpAdapterException
+     * @throws \ColoursFactory\ReFreshMailer\Exception\HttpAdapterException
      */
     public function sendRequest($method, $url, array $params = [], array $headers = [])
     {

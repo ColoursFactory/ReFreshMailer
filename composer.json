@@ -1,10 +1,12 @@
 {
-  "name": "preclowski/refreshmailer",
+  "name": "coloursfactory/refreshmailer",
   "description": "Implementation of FreshMail.pl REST API",
   "keywords": [
     "freshmail",
     "api",
-    "rest"
+    "rest",
+    "curl",
+    "guzzle"
   ],
   "type": "package",
   "license": "MIT",
@@ -30,7 +32,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Preclowski\\ReFreshMailer\\": "src/"
+      "ColoursFactory\\ReFreshMailer\\": "src/"
     }
   },
   "autoload-dev": {

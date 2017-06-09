@@ -1,9 +1,9 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\HttpAdapter;
+namespace ColoursFactory\ReFreshMailer\HttpAdapter;
 
-use Preclowski\ReFreshMailer\Message\BufferStream;
-use Preclowski\ReFreshMailer\Message\CurlResponse;
+use ColoursFactory\ReFreshMailer\Message\BufferStream;
+use ColoursFactory\ReFreshMailer\Message\CurlResponse;
 
 /**
  * Class implements basic cURL featrues in order to make

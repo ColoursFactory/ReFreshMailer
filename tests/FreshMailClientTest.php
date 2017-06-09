@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use Preclowski\ReFreshMailer\Http\HttpAdapterInterface;
-use Preclowski\ReFreshMailer\FreshMailClient;
+use ColoursFactory\ReFreshMailer\Http\HttpAdapterInterface;
+use ColoursFactory\ReFreshMailer\FreshMailClient;
 use PHPUnit\Framework\TestCase;
 
 class FreshMailClientTest extends TestCase

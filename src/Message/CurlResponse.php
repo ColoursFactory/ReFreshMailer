@@ -1,6 +1,6 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\Message;
+namespace ColoursFactory\ReFreshMailer\Message;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;

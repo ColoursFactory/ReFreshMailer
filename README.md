@@ -36,8 +36,8 @@ composer require preclowski/refreshmailer
 ## Usage
 
 ```php
-use Preclowski\ReFreshMailer\FreshMailClient;
-use Preclowski\ReFreshMailer\Http\GuzzleHttpAdapter;
+use ColoursFactory\ReFreshMailer\FreshMailClient;
+use ColoursFactory\ReFreshMailer\Http\GuzzleHttpAdapter;
 use GuzzleHttp\Client;
 
 $options = [

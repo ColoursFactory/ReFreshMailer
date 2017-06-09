@@ -1,11 +1,11 @@
 <?php
 
-namespace Preclowski\ReFreshMailer;
+namespace ColoursFactory\ReFreshMailer;
 
-use Preclowski\ReFreshMailer\Exception\FreshMailApiErrorException;
-use Preclowski\ReFreshMailer\Exception\FreshMailApiException;
-use Preclowski\ReFreshMailer\Exception\HttpAdapterException;
-use Preclowski\ReFreshMailer\HttpAdapter\HttpAdapterInterface;
+use ColoursFactory\ReFreshMailer\Exception\FreshMailApiErrorException;
+use ColoursFactory\ReFreshMailer\Exception\FreshMailApiException;
+use ColoursFactory\ReFreshMailer\Exception\HttpAdapterException;
+use ColoursFactory\ReFreshMailer\HttpAdapter\HttpAdapterInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -44,8 +44,8 @@ class FreshMailClient
      * @return array
      *
      * @throws \InvalidArgumentException
-     * @throws \Preclowski\ReFreshMailer\Exception\FreshMailApiErrorException
-     * @throws \Preclowski\ReFreshMailer\Exception\FreshMailApiException
+     * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiErrorException
+     * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiException
      */
     public function doRequest($url, array $params = [])
     {
@@ -105,8 +105,8 @@ class FreshMailClient
      *
      * @return array
      *
-     * @throws \Preclowski\ReFreshMailer\Exception\FreshMailApiErrorException
-     * @throws \Preclowski\ReFreshMailer\Exception\FreshMailApiException
+     * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiErrorException
+     * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiException
      */
     private function handleResponse(ResponseInterface $response, $url)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\Exception;
+namespace ColoursFactory\ReFreshMailer\Exception;
 
 class BadRequestException extends FreshMailApiException
 {
