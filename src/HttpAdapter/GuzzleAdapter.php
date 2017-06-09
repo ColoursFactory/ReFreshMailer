@@ -18,10 +18,7 @@ class GuzzleAdapter implements HttpAdapterInterface
     /** @var ClientInterface */
     private $client;
 
-    /**
-     * @param array $options
-     */
-    public function __construct(array $options = [])
+    public function __construct()
     {
         $this->client = new Client();
     }
