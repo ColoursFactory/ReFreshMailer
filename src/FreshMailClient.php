@@ -18,23 +18,25 @@ class FreshMailClient
 {
     /** @var string */
     private $host;
-
-    /** @var array */
-    private $options;
-
     /** @var HttpAdapterInterface */
     private $httpAdapter;
+    /** @var string */
+    private $apiKey;
+    /** @var string */
+    private $apiSecret;
 
     /**
      * @param HttpAdapterInterface $httpAdapter
      * @param string $host
-     * @param array $options
+     * @param string $apiKey
+     * @param string $apiSecret
      */
-    public function __construct(HttpAdapterInterface $httpAdapter, $host, array $options)
+    public function __construct(HttpAdapterInterface $httpAdapter, $host, $apiKey, $apiSecret)
     {
         $this->httpAdapter = $httpAdapter;
         $this->host = $host;
-        $this->options = $options;
+        $this->apiKey = $apiKey;
+        $this->apiSecret = $apiSecret;
     }
 
     /**
@@ -50,7 +52,7 @@ class FreshMailClient
     public function doRequest($url, array $params = [])
     {
         $headers = [
-            'X-Rest-ApiKey' => $this->getOption('apiKey'),
+            'X-Rest-ApiKey' => $this->apiKey,
             'X-Rest-ApiSign' => $this->calculateSignature($url, $params),
             'Content-Type' => 'application/json',
         ];
@@ -75,28 +77,11 @@ class FreshMailClient
     private function calculateSignature($url, $params)
     {
         return sha1(
-            $this->getOption('apiKey') .
+            $this->apiKey .
             $url .
             json_encode($params) .
-            $this->getOption('apiSecret')
+            $this->apiSecret
         );
-    }
-
-    /**
-     * @param string $key
-     * @return mixed
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function getOption($key)
-    {
-        if (!isset($this->options[$key])) {
-            throw new \InvalidArgumentException(
-                sprintf('You are trying to access "%s" option, but it doesn\'t exists.', $key)
-            );
-        }
-
-        return $this->options[$key];
     }
 
     /**
@@ -152,6 +137,6 @@ class FreshMailClient
      */
     private function getFilePath($filename)
     {
-        return rtrim($this->getOption('tmp'), '/') . DIRECTORY_SEPARATOR . $filename;
+        return rtrim('/tmp', '/') . DIRECTORY_SEPARATOR . $filename;
     }
 }
