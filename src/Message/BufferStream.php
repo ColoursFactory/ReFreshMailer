@@ -1,6 +1,6 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\Http;
+namespace Preclowski\ReFreshMailer\Message;
 
 use Psr\Http\Message\StreamInterface;
 
@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  * @link https://github.com/Preclowski/ReFreshMailer
  * @license MIT
  */
-class CurlStream implements StreamInterface
+class BufferStream implements StreamInterface
 {
     private $buffer = '';
 

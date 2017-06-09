@@ -1,6 +1,6 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\Http;
+namespace Preclowski\ReFreshMailer\HttpAdapter;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,5 +21,5 @@ interface HttpAdapterInterface
      * @param array $headers
      * @return ResponseInterface
      */
-    public function doRequest($method, $url, array $params = [], array $headers = []);
+    public function sendRequest($method, $url, array $params = [], array $headers = []);
 }

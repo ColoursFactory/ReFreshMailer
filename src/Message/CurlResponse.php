@@ -1,6 +1,6 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\Http;
+namespace Preclowski\ReFreshMailer\Message;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -94,7 +94,7 @@ class CurlResponse implements ResponseInterface
         $this->statusCode = (int) $status;
 
         if ($body !== '' && $body !== null) {
-            $this->stream = new CurlStream();
+            $this->stream = new BufferStream();
             $this->stream->write($body);
         }
 

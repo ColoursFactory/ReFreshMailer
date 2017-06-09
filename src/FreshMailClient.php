@@ -4,7 +4,8 @@ namespace Preclowski\ReFreshMailer;
 
 use Preclowski\ReFreshMailer\Exception\FreshMailApiErrorException;
 use Preclowski\ReFreshMailer\Exception\FreshMailApiException;
-use Preclowski\ReFreshMailer\Http\HttpAdapterInterface;
+use Preclowski\ReFreshMailer\Exception\HttpAdapterException;
+use Preclowski\ReFreshMailer\HttpAdapter\HttpAdapterInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -58,8 +59,8 @@ class FreshMailClient
         $method = empty($params) ? 'GET' : 'POST';
 
         try {
-            $response = $this->httpAdapter->doRequest($method, $address, $params, $headers);
-        } catch (GuzzleException $e) {
+            $response = $this->httpAdapter->sendRequest($method, $address, $params, $headers);
+        } catch (HttpAdapterException $e) {
             throw new FreshMailApiException($e->getMessage(), $e->getCode(), $e);
         }
 

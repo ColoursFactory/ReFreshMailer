@@ -1,6 +1,9 @@
 <?php
 
-namespace Preclowski\ReFreshMailer\Http;
+namespace Preclowski\ReFreshMailer\HttpAdapter;
+
+use Preclowski\ReFreshMailer\Message\BufferStream;
+use Preclowski\ReFreshMailer\Message\CurlResponse;
 
 /**
  * Class implements basic cURL featrues in order to make
@@ -10,12 +13,12 @@ namespace Preclowski\ReFreshMailer\Http;
  * @link https://github.com/Preclowski/ReFreshMailer
  * @license MIT
  */
-class CurlHttpAdapter implements HttpAdapterInterface
+class CurlAdapter implements HttpAdapterInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function doRequest($method, $url, array $params = [], array $headers = [])
+    public function sendRequest($method, $url, array $params = [], array $headers = [])
     {
         $curl = curl_init($url);
 
@@ -32,7 +35,7 @@ class CurlHttpAdapter implements HttpAdapterInterface
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $headers    = substr($body, 0, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
 
-        $stream = new CurlStream();
+        $stream = new BufferStream();
         $stream->write($body);
 
         return new CurlResponse($statusCode, $headers, $stream);
