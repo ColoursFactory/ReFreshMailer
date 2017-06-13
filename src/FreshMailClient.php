@@ -11,7 +11,6 @@ use Http\Client\Exception\HttpException;
 use Http\Client\HttpClient;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
-use Http\Message\MessageFactory;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -26,7 +25,6 @@ class FreshMailClient
 
     /**
      * @param HttpClient|null $httpClient
-     * @param MessageFactory $messageFactory
      * @param string $host
      * @param string $apiKey
      * @param string $apiSecret
