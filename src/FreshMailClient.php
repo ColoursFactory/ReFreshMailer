@@ -2,11 +2,16 @@
 
 namespace ColoursFactory\ReFreshMailer;
 
-use ColoursFactory\ReFreshMailer\Exception\FreshMailApiErrorException;
 use ColoursFactory\ReFreshMailer\Exception\FreshMailApiException;
-use ColoursFactory\ReFreshMailer\Exception\HttpAdapterException;
-use ColoursFactory\ReFreshMailer\HttpAdapter\HttpAdapterInterface;
-use GuzzleHttp\Exception\GuzzleException;
+use ColoursFactory\ReFreshMailer\HttpClient\FreshMailAuthenticationPlugin;
+use ColoursFactory\ReFreshMailer\HttpClient\HttpClientFactory;
+use Http\Client\Common\Plugin\AddHostPlugin;
+use Http\Client\Common\Plugin\HeaderDefaultsPlugin;
+use Http\Client\Exception\HttpException;
+use Http\Client\HttpClient;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\UriFactoryDiscovery;
+use Http\Message\MessageFactory;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -16,27 +21,28 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FreshMailClient
 {
-    /** @var string */
-    private $host;
-    /** @var HttpAdapterInterface */
-    private $httpAdapter;
-    /** @var string */
-    private $apiKey;
-    /** @var string */
-    private $apiSecret;
+    /** @var HttpClient */
+    private $httpClient;
 
     /**
-     * @param HttpAdapterInterface $httpAdapter
+     * @param HttpClient|null $httpClient
+     * @param MessageFactory $messageFactory
      * @param string $host
      * @param string $apiKey
      * @param string $apiSecret
      */
-    public function __construct(HttpAdapterInterface $httpAdapter, $host, $apiKey, $apiSecret)
+    public function __construct(HttpClient $httpClient = null, $host, $apiKey, $apiSecret)
     {
-        $this->httpAdapter = $httpAdapter;
-        $this->host = $host;
-        $this->apiKey = $apiKey;
-        $this->apiSecret = $apiSecret;
+        $plugins = [
+            new AddHostPlugin(UriFactoryDiscovery::find()->createUri($host)),
+            new FreshMailAuthenticationPlugin($apiKey, $apiSecret),
+            new HeaderDefaultsPlugin([
+                'Content-Type' => 'application/json',
+            ]),
+        ];
+
+        $this->httpClient = HttpClientFactory::create($plugins, $httpClient);
+        $this->messageFactory = MessageFactoryDiscovery::find();
     }
 
     /**
@@ -46,97 +52,44 @@ class FreshMailClient
      * @return array
      *
      * @throws \InvalidArgumentException
-     * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiErrorException
      * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiException
      */
     public function doRequest($url, array $params = [])
     {
-        $headers = [
-            'X-Rest-ApiKey' => $this->apiKey,
-            'X-Rest-ApiSign' => $this->calculateSignature($url, $params),
-            'Content-Type' => 'application/json',
-        ];
-
-        $address = sprintf('%s/%s', $this->host, $url);
         $method = empty($params) ? 'GET' : 'POST';
 
+        $request = $this->messageFactory->createRequest($method, $url, [], json_encode($params));
+
         try {
-            $response = $this->httpAdapter->sendRequest($method, $address, $params, $headers);
-        } catch (HttpAdapterException $e) {
-            throw new FreshMailApiException($e->getMessage(), $e->getCode(), $e);
+            $response = $this->httpClient->sendRequest($request);
+        } catch (HttpException $e) {
+            throw new FreshMailApiException($e->getMessage(), $e->getRequest(), $e->getResponse(), $e);
         }
 
-        return $this->handleResponse($response, $url);
-    }
-
-    /**
-     * @return string
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function calculateSignature($url, $params)
-    {
-        return sha1(
-            $this->apiKey .
-            $url .
-            json_encode($params) .
-            $this->apiSecret
-        );
+        return json_decode($this->handleResponse($response)->getBody()->getContents(), true);
     }
 
     /**
      * @param ResponseInterface $response
-     * @param string $url
      *
-     * @return array
+     * @return ResponseInterface
      *
-     * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiErrorException
+     * @throws \RuntimeException
      * @throws \ColoursFactory\ReFreshMailer\Exception\FreshMailApiException
      */
-    private function handleResponse(ResponseInterface $response, $url)
+    private function handleResponse(ResponseInterface $response)
     {
         $contentType = $response->getHeader('Content-Type');
 
         if ('application/zip' === $contentType) {
-            $this->handleFileResponse($response);
+            $filename = $response->getHeader('Filename');
+            $filePath = '/tmp/'. $filename;
+
+            file_put_contents($filePath, $response->getStream());
+
+            $response->getBody()->write($filePath . $filename);
         }
 
-        try {
-            $content = \GuzzleHttp\json_decode($response->getStream());
-        } catch (\InvalidArgumentException $e) {
-            throw new FreshMailApiException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        if (200 !== $response->getStatusCode()) {
-            throw new FreshMailApiErrorException($url, $content['errors']);
-        }
-
-        return $content;
-    }
-
-    /**
-     * Saves file to directory specified in configuration
-     *
-     * @param ResponseInterface $response
-     */
-    private function handleFileResponse(ResponseInterface $response)
-    {
-        $filename = $response->getHeader('Filename');
-
-        file_put_contents($this->getFilePath($filename), $response->getStream());
-    }
-
-    /**
-     * Returns absolute path to file
-     *
-     * @param string $filename
-     *
-     * @return string
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function getFilePath($filename)
-    {
-        return rtrim('/tmp', '/') . DIRECTORY_SEPARATOR . $filename;
+        return $response;
     }
 }

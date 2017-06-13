@@ -2,6 +2,8 @@
 
 namespace ColoursFactory\ReFreshMailer\Exception;
 
-class FreshMailApiException extends \BadMethodCallException
+use Http\Client\Exception\HttpException;
+
+class FreshMailApiException extends HttpException
 {
 }
