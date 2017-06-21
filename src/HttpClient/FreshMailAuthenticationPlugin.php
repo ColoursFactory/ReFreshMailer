@@ -66,7 +66,7 @@ class FreshMailAuthenticationPlugin implements Plugin
     {
         return sha1(
             $apiKey .
-            ltrim('/', $request->getUri()->getPath()) .
+            $request->getUri()->getPath() .
             $request->getBody()->getContents() .
             $apiSecret
         );
